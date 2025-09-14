@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Anamnese - Personal Pedro Siriano</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: #0a0a0a;
+            border-radius: 10px;
+            box-shadow: 0 0 15px #39ff14;
+            overflow: hidden;
+            margin-bottom: 30px;
+            border: 1px solid #39ff14;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a3b1d 100%);
+            color: #39ff14;
+            text-align: center;
+            padding: 20px;
+            border-bottom: 2px solid #39ff14;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #39ff14;
+            text-shadow: 0 0 5px rgba(57, 255, 20, 0.7);
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: #ffffff;
+        }
+        
+        .cref-info {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            color: #cccccc;
+        }
+        
+        .form-container {
+            padding: 20px;
+        }
+        
+        .section-title {
+            background: rgba(57, 255, 20, 0.1);
+            padding: 10px 15px;
+            margin: 20px 0 15px;
+            border-left: 4px solid #39ff14;
+            font-weight: 600;
+            color: #39ff14;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px 15px;
+        }
+        
+        .form-group {
+            flex: 1 0 300px;
+            padding: 0 10px;
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #39ff14;
+            font-size: 0.9rem;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: #39ff14;
+            outline: none;
+            box-shadow: 0 0 5px #39ff14;
+        }
+        
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+        }
+        
+        .radio-option input[type="radio"] {
+            width: auto;
+            margin-right: 8px;
+            accent-color: #39ff14;
+        }
+        
+        .radio-option label {
+            display: inline;
+            color: #ffffff;
+            margin-bottom: 0;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #1a3b1d 0%, #39ff14 100%);
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #39ff14 0%, #1a3b1d 100%);
+            box-shadow: 0 0 15px #39ff14;
+            transform: translateY(-2px);
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: center;
+        }
+        
+        footer {
+            text-align: center;
+            color: #39ff14;
+            margin-top: 20px;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        .atividade-container {
+            display: none;
+            width: 100%;
+            border: 1px solid #39ff14;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .atividade-item {
+            background: rgba(57, 255, 20, 0.05);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #39ff14;
+        }
+        
+        @media (max-width: 768px) {
+            .form-group {
+                flex: 1 0 100%;
+            }
+            
+            .container {
+                border-radius: 8px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .form-container {
+                padding: 15px;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Formulário de Anamnese</h1>
+            <p class="cref-info">Treinador e Personal Pedro Siriano - CREF 017922-G/DF</p>
+            <p class="subtitle">Preencha os dados para avaliação física</p>
+        </header>
+        
+        <div class="form-container">
+            <div class="section-title">Dados Pessoais</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="avaliador">Avaliador:</label>
+                    <input type="text" id="avaliador" value="Pedro Siriano">
+                </div>
+                <div class="form-group">
+                    <label for="codigo">Código:</label>
+                    <input type="text" id="codigo" value="208">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome">
+                </div>
+                <div class="form-group">
+                    <label for="nascimento">Data de Nascimento:</label>
+                    <input type="date" id="nascimento">
+                </div>
+                <div class="form-group">
+                    <label for="idade">Idade:</label>
+                    <input type="number" id="idade" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="fcrep">FCRep:</label>
+                    <input type="text" id="fcrep">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="altura">Altura (cm):</label>
+                    <input type="number" id="altura">
+                </div>
+                <div class="form-group">
+                    <label for="sexo">Sexo:</label>
+                    <select id="sexo">
+                        <option value="">Selecione</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="feminino">Feminino</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="peso">Peso (kg):</label>
+                    <input type="number" id="peso" step="0.1">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="endereco">Endereço:</label>
+                <textarea id="endereco"></textarea>
+            </div>
+            
+            <div class="section-title">Anamnese</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="objetivo">Objetivo:</label>
+                    <textarea id="objetivo"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="meta">Meta de treino a obter:</label>
+                    <input type="text" id="meta" value="70">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Sobrepeso na Infância/Adolescência:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="sobrepeso_sim" name="sobrepeso" value="sim">
+                            <label for="sobrepeso_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="sobrepeso_nao" name="sobrepeso" value="nao">
+                            <label for="sobrepeso_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Seus parents são obesos:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="pais_obesos_sim" name="pais_obesos" value="sim">
+                            <label for="pais_obesos_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="pais_obesos_nao" name="pais_obesos" value="nao">
+                            <label for="pais_obesos_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Pratica atividade física:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="atividade_sim" name="atividade" value="sim">
+                            <label for="atividade_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="atividade_nao" name="atividade" value="nao">
+                            <label for="atividade_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="quantidade_atividades_group" style="display: none;">
+                    <label for="quantidade_atividades">Quantidade de atividades:</label>
+                    <select id="quantidade_atividades">
+                        <option value="0">Selecione</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="atividades_container" class="atividade-container">
+                <!-- Campos de atividades serão gerados aqui dinamicamente -->
+            </div>
+            
+            <div class="section-title">Sensações aos exercícios</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tontura:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="tontura_sim" name="tontura" value="sim">
+                            <label for="tontura_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="tontura_nao" name="tontura" value="nao">
+                            <label for="tontura_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Enjoo:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="enjoo_sim" name="enjoo" value="sim">
+                            <label for="enjoo_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="enjoo_nao" name="enjoo" value="nao">
+                            <label for="enjoo_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Mal-estar:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="mal_estar_sim" name="mal_estar" value="sim">
+                            <label for="mal_estar_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="mal_estar_nao" name="mal_estar" value="nao">
+                            <label for="mal_estar_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="outros_desconfortos">Algum outro desconforto:</label>
+                <textarea id="outros_desconfortos"></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="refeicoes_dia">Refeições feitas ao dia:</label>
+                    <input type="number" id="refeicoes_dia">
+                </div>
+                
+                <div class="form-group">
+                    <label for="agua_dia">Litros de água por dia:</label>
+                    <input type="number" id="agua_dia" step="0.1">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Faz dieta:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="dieta_sim" name="dieta" value="sim">
+                            <label for="dieta_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="dieta_nao" name="dieta" value="nao">
+                            <label for="dieta_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Suplementação:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="suplementacao_sim" name="suplementacao" value="sim">
+                            <label for="suplementacao_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="suplementacao_nao" name="suplementacao" value="nao">
+                            <label for="suplementacao_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="horas_sono">Horas totais de sono diário:</label>
+                <input type="number" id="horas_sono" step="0.1">
+            </div>
+            
+            <div class="section-title">Tabagismo e Álcool</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fumante:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="fumante_sim" name="fumante" value="sim">
+                            <label for="fumante_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="fumante_nao" name="fumante" value="nao">
+                            <label for="fumante_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fumante_quantia">Quantia:</label>
+                    <input type="text" id="fumante_quantia">
+                </div>
+                
+                <div class="form-group">
+                    <label for="fumante_frequencia">Frequência:</label>
+                    <input type="text" id="fumante_frequencia">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Consumo de bebida alcoólica:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="alcool_sim" name="alcool" value="sim">
+                            <label for="alcool_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="alcool_nao" name="alcool" value="nao">
+                            <label for="alcool_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="alcool_tipo">Quais?</label>
+                    <input type="text" id="alcool_tipo">
+                </div>
+                
+                <div class="form-group">
+                    <label for="alcool_frequencia">Frequência:</label>
+                    <input type="text" id="alcool_frequencia">
+                </div>
+            </div>
+            
+            <div class="section-title">Condições de Saúde</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Diabético:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="diabetico_sim" name="diabetico" value="sim">
+                            <label for="diabetico_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="diabetico_nao" name="diabetico" value="nao">
+                            <label for="diabetico_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tipo 1:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="diabete_tipo1" name="diabete_tipo" value="tipo1">
+                            <label for="diabete_tipo1">Sim</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tipo 2:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="diabete_tipo2" name="diabete_tipo" value="tipo2">
+                            <label for="diabete_tipo2">Sim</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Origem:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="diabete_origem_familiar" name="diabete_origem" value="familiar">
+                            <label for="diabete_origem_familiar">Familiar</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="diabete_origem_adquirido" name="diabete_origem" value="adquirido">
+                            <label for="diabete_origem_adquirido">Adquirido</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Uso de medicação Insulina:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="insulina_sim" name="insulina" value="sim">
+                            <label for="insulina_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="insulina_nao" name="insulina" value="nao">
+                            <label for="insulina_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="insulina_vezes">Quantas vezes por dia:</label>
+                    <input type="number" id="insulina_vezes">
+                </div>
+                
+                <div class="form-group">
+                    <label for="insulina_local">Local:</label>
+                    <input type="text" id="insulina_local">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Hipertenso:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="hipertenso_sim" name="hipertenso" value="sim">
+                            <label for="hipertenso_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="hipertenso_nao" name="hipertenso" value="nao">
+                            <label for="hipertenso_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pressao">Pressão Arterial:</label>
+                    <input type="text" id="pressao">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Problema cardíaco:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="cardiaco_sim" name="cardiaco" value="sim">
+                            <label for="cardiaco_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="cardiaco_nao" name="cardiaco" value="nao">
+                            <label for="cardiaco_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardiaco_tipo">Qual:</label>
+                    <input type="text" id="cardiaco_tipo">
+                </div>
+                
+                <div class="form-group">
+                    <label>Origem:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="cardiaco_origem_familiar" name="cardiaco_origem" value="familiar">
+                            <label for="cardiaco_origem_familiar">Familiar</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="cardiaco_origem_adquirido" name="cardiaco_origem" value="adquirido">
+                            <label for="cardiaco_origem_adquirido">Adquirido</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Problema respiratório:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="respiratorio_sim" name="respiratorio" value="sim">
+                            <label for="respiratorio_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="respiratorio_nao" name="respiratorio" value="nao">
+                            <label for="respiratorio_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="respiratorio_tipo">Qual:</label>
+                    <input type="text" id="respiratorio_tipo">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Problemas ortopédicos:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="ortopedico_sim" name="ortopedico" value="sim">
+                            <label for="ortopedico_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="ortopedico_nao" name="ortopedico" value="nao">
+                            <label for="ortopedico_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ortopedico_tipo">Qual:</label>
+                    <input type="text" id="ortopedico_tipo">
+                </div>
+                
+                <div class="form-group">
+                    <label for="ortopedico_onde">Onde:</label>
+                    <input type="text" id="ortopedico_onde">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Fraturas:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="fraturas_sim" name="fraturas" value="sim">
+                            <label for="fraturas_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="fraturas_nao" name="fraturas" value="nao">
+                            <label for="fraturas_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fraturas_tipo">Tipo:</label>
+                    <input type="text" id="fraturas_tipo">
+                </div>
+                
+                <div class="form-group">
+                    <label for="fraturas_onde">Onde:</label>
+                    <input type="text" id="fraturas_onde">
+                </div>
+                
+                <div class="form-group">
+                    <label for="fraturas_data">Data:</label>
+                    <input type="date" id="fraturas_data">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Uso de medicamentos:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="medicamentos_sim" name="medicamentos" value="sim">
+                            <label for="medicamentos_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="medicamentos_nao" name="medicamentos" value="nao">
+                            <label for="medicamentos_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="medicamentos_tipo">Qual:</label>
+                    <input type="text" id="medicamentos_tipo">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Uso de Aes:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="aes_sim" name="aes" value="sim">
+                            <label for="aes_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="aes_nao" name="aes" value="nao">
+                            <label for="aes_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="aes_tipo">Qual:</label>
+                    <input type="text" id="aes_tipo">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Cirurgia:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="cirurgia_sim" name="cirurgia" value="sim">
+                            <label for="cirurgia_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="cirurgia_nao" name="cirurgia" value="nao">
+                            <label for="cirurgia_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cirurgia_local">Local:</label>
+                    <input type="text" id="cirurgia_local">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cirurgia_data">Data:</label>
+                    <input type="date" id="cirurgia_data">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cirurgia_tipo">Tipo:</label>
+                    <input type="text" id="cirurgia_tipo">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Dor na coluna:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="coluna_sim" name="coluna" value="sim">
+                            <label for="coluna_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="coluna_nao" name="coluna" value="nao">
+                            <label for="coluna_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="coluna_onde">Onde:</label>
+                    <input type="text" id="coluna_onde">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Dor muscular:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="muscular_sim" name="muscular" value="sim">
+                            <label for="muscular_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="muscular_nao" name="muscular" value="nao">
+                            <label for="muscular_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="muscular_onde">Onde:</label>
+                    <input type="text" id="muscular_onde">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Dor articular:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="articular_sim" name="articular" value="sim">
+                            <label for="articular_sim">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="articular_nao" name="articular" value="nao">
+                            <label for="articular_nao">Não</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="articular_onde">Onde:</label>
+                    <input type="text" id="articular_onde">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="recomendacao">Recomendações ou restrições médicas para prática de exercícios:</label>
+                <textarea id="recomendacao"></textarea>
+            </div>
+            
+            <div class="btn-container">
+                <button id="gerar-pdf" class="btn">
+                    Gerar PDF da Anamnese
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Treinador e Personal Pedro Siriano - CREF 017922-G/DF &copy; 2025</p>
+    </footer>
+
+    <script>
+        // Inicializar o jsPDF
+        const { jsPDF } = window.jspdf;
+        
+        // Função para obter valor de radio button
+        function getRadioValue(name) {
+            const selected = document.querySelector(`input[name="${name}"]:checked`);
+            return selected ? selected.value : 'Não informado';
+        }
+        
+        // Função para calcular idade a partir da data de nascimento
+        function calcularIdade() {
+            const nascimentoInput = document.getElementById('nascimento');
+            const idadeInput = document.getElementById('idade');
+            
+            if (nascimentoInput.value) {
+                const nascimento = new Date(nascimentoInput.value);
+                const hoje = new Date();
+                
+                let idade = hoje.getFullYear() - nascimento.getFullYear();
+                const mes = hoje.getMonth() - nascimento.getMonth();
+                
+                if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+                    idade--;
+                }
+                
+                idadeInput.value = idade;
+            } else {
+                idadeInput.value = '';
+            }
+        }
+        
+        // Adicionar evento para calcular idade quando a data de nascimento for alterada
+        document.getElementById('nascimento').addEventListener('change', calcularIdade);
+        
+        // Controle da exibição da quantidade de atividades
+        document.querySelectorAll('input[name="atividade"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const quantidadeGroup = document.getElementById('quantidade_atividades_group');
+                const container = document.getElementById('atividades_container');
+                if (this.value === 'sim') {
+                    quantidadeGroup.style.display = 'block';
+                    container.style.display = 'block';
+                } else {
+                    quantidadeGroup.style.display = 'none';
+                    container.style.display = 'none';
+                    container.innerHTML = '';
+                }
+            });
+        });
+        
+        // Gerar campos de atividades conforme a quantidade selecionada
+        document.getElementById('quantidade_atividades').addEventListener('change', function() {
+            const quantidade = parseInt(this.value);
+            const container = document.getElementById('atividades_container');
+            container.innerHTML = '';
+            
+            if (quantidade > 0) {
+                for (let i = 1; i <= quantidade; i++) {
+                    const atividadeItem = document.createElement('div');
+                    atividadeItem.className = 'atividade-item';
+                    atividadeItem.innerHTML = `
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="atividade_tipo_${i}">Atividade ${i}:</label>
+                                <input type="text" id="atividade_tipo_${i}">
+                            </div>
+                            <div class="form-group">
+                                <label for="atividade_tempo_${i}">Tempo de prática (${i}):</label>
+                                <input type="text" id="atividade_tempo_${i}">
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(atividadeItem);
+                }
+            }
+        });
+        
+        // Gerar PDF
+        document.getElementById('gerar-pdf').addEventListener('click', function() {
+            // Coletar dados do formulário
+            const avaliador = document.getElementById('avaliador').value || 'Não informado';
+            const codigo = document.getElementById('codigo').value || 'Não informado';
+            const nome = document.getElementById('nome').value || 'Não informado';
+            const nascimento = document.getElementById('nascimento').value || 'Não informado';
+            const idade = document.getElementById('idade').value || 'Não informado';
+            const fcrep = document.getElementById('fcrep').value || 'Não informado';
+            const altura = document.getElementById('altura').value || 'Não informado';
+            const sexo = document.getElementById('sexo').value || 'Não informado';
+            const peso = document.getElementById('peso').value || 'Não informado';
+            const endereco = document.getElementById('endereco').value || 'Não informado';
+            const objetivo = document.getElementById('objetivo').value || 'Não informado';
+            const meta = document.getElementById('meta').value || 'Não informado';
+            
+            // Coletar dados de radio buttons
+            const sobrepeso = getRadioValue('sobrepeso');
+            const paisObesos = getRadioValue('pais_obesos');
+            const atividadeFisica = getRadioValue('atividade');
+            
+            // Coletar atividades físicas
+            let atividades = [];
+            const quantidadeAtividades = document.getElementById('quantidade_atividades').value;
+            if (quantidadeAtividades && quantidadeAtividades > 0) {
+                for (let i = 1; i <= parseInt(quantidadeAtividades); i++) {
+                    const tipo = document.getElementById(`atividade_tipo_${i}`)?.value;
+                    const tempo = document.getElementById(`atividade_tempo_${i}`)?.value;
+                    if (tipo && tempo) {
+                        atividades.push({ tipo, tempo });
+                    }
+                }
+            }
+            
+            const tontura = getRadioValue('tontura');
+            const enjoo = getRadioValue('enjoo');
+            const malEstar = getRadioValue('mal_estar');
+            const outrosDesconfortos = document.getElementById('outros_desconfortos').value || 'Não informado';
+            const refeicoesDia = document.getElementById('refeicoes_dia').value || 'Não informado';
+            const aguaDia = document.getElementById('agua_dia').value || 'Não informado';
+            const dieta = getRadioValue('dieta');
+            const suplementacao = getRadioValue('suplementacao');
+            const horasSono = document.getElementById('horas_sono').value || 'Não informado';
+            const fumante = getRadioValue('fumante');
+            const fumanteQuantia = document.getElementById('fumante_quantia').value || 'Não informado';
+            const fumanteFrequencia = document.getElementById('fumante_frequencia').value || 'Não informado';
+            const alcool = getRadioValue('alcool');
+            const alcoolTipo = document.getElementById('alcool_tipo').value || 'Não informado';
+            const alcoolFrequencia = document.getElementById('alcool_frequencia').value || 'Não informado';
+            const diabetico = getRadioValue('diabetico');
+            const diabeteTipo1 = document.querySelector('input[name="diabete_tipo"]:checked')?.value === 'tipo1' ? 'Sim' : 'Não';
+            const diabeteTipo2 = document.querySelector('input[name="diabete_tipo"]:checked')?.value === 'tipo2' ? 'Sim' : 'Não';
+            const diabeteOrigem = getRadioValue('diabete_origem');
+            const insulina = getRadioValue('insulina');
+            const insulinaVezes = document.getElementById('insulina_vezes').value || 'Não informado';
+            const insulinaLocal = document.getElementById('insulina_local').value || 'Não informado';
+            const hipertenso = getRadioValue('hipertenso');
+            const pressao = document.getElementById('pressao').value || 'Não informado';
+            const cardiaco = getRadioValue('cardiaco');
+            const cardiacoTipo = document.getElementById('cardiaco_tipo').value || 'Não informado';
+            const cardiacoOrigem = getRadioValue('cardiaco_origem');
+            const respiratorio = getRadioValue('respiratorio');
+            const respiratorioTipo = document.getElementById('respiratorio_tipo').value || 'Não informado';
+            const ortopedico = getRadioValue('ortopedico');
+            const ortopedicoTipo = document.getElementById('ortopedico_tipo').value || 'Não informado';
+            const ortopedicoOnde = document.getElementById('ortopedico_onde').value || 'Não informado';
+            const fraturas = getRadioValue('fraturas');
+            const fraturasTipo = document.getElementById('fraturas_tipo').value || 'Não informado';
+            const fraturasOnde = document.getElementById('fraturas_onde').value || 'Não informado';
+            const fraturasData = document.getElementById('fraturas_data').value || 'Não informado';
+            const medicamentos = getRadioValue('medicamentos');
+            const medicamentosTipo = document.getElementById('medicamentos_tipo').value || 'Não informado';
+            const aes = getRadioValue('aes');
+            const aesTipo = document.getElementById('aes_tipo').value || 'Não informado';
+            const cirurgia = getRadioValue('cirurgia');
+            const cirurgiaLocal = document.getElementById('cirurgia_local').value || 'Não informado';
+            const cirurgiaData = document.getElementById('cirurgia_data').value || 'Não informado';
+            const cirurgiaTipo = document.getElementById('cirurgia_tipo').value || 'Não informado';
+            const coluna = getRadioValue('coluna');
+            const colunaOnde = document.getElementById('coluna_onde').value || 'Não informado';
+            const muscular = getRadioValue('muscular');
+            const muscularOnde = document.getElementById('muscular_onde').value || 'Não informado';
+            const articular = getRadioValue('articular');
+            const articularOnde = document.getElementById('articular_onde').value || 'Não informado';
+            const recomendacao = document.getElementById('recomendacao').value || 'Não informado';
+            
+            // Criar novo documento PDF
+            const doc = new jsPDF();
+            
+            // Configurações da página
+            const pageHeight = doc.internal.pageSize.height;
+            const margin = 20;
+            let y = margin;
+            
+            // Função para adicionar nova página se necessário
+            function checkPageHeight(y) {
+                if (y >= pageHeight - margin) {
+                    doc.addPage();
+                    return margin;
+                }
+                return y;
+            }
+            
+            // Adicionar conteúdo ao PDF - PRIMEIRA PÁGINA (Dados Pessoais e Anamnese)
+            doc.setFontSize(16);
+            doc.setTextColor(0, 100, 0);
+            doc.text('FORMULÁRIO DE ANAMNESE - DADOS PESSOAIS E ANAMNESE', 105, y, { align: 'center' });
+            y += 10;
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Treinador e Personal: Pedro Siriano - CREF 017922-G/DF', 105, y, { align: 'center' });
+            y += 10;
+            
+            doc.setDrawColor(0, 100, 0);
+            doc.line(margin, y, 200, y);
+            y += 15;
+            
+            y = checkPageHeight(y);
+            
+            // Dados Pessoais
+            doc.setFontSize(14);
+            doc.setTextColor(0, 100, 0);
+            doc.text('DADOS PESSOAIS', margin, y);
+            y += 10;
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            
+            doc.text(`Avaliador: ${avaliador}`, margin, y);
+            doc.text(`Código: ${codigo}`, 150, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Nome: ${nome}`, margin, y);
+            doc.text(`Data Nascimento: ${nascimento}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Idade: ${idade}`, margin, y);
+            doc.text(`FCRep: ${fcrep}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Altura: ${altura} cm`, margin, y);
+            doc.text(`Sexo: ${sexo}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Peso: ${peso} kg`, margin, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            const splitEndereco = doc.splitTextToSize(`Endereço: ${endereco}`, 170);
+            doc.text(splitEndereco, margin, y);
+            y += splitEndereco.length * 6;
+            
+            y += 5;
+            y = checkPageHeight(y);
+            
+            // Anamnese
+            doc.setFontSize(14);
+            doc.setTextColor(0, 100, 0);
+            doc.text('ANAMNESE', margin, y);
+            y += 10;
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            
+            y = checkPageHeight(y);
+            const splitObjetivo = doc.splitTextToSize(`Objetivo: ${objetivo}`, 170);
+            doc.text(splitObjetivo, margin, y);
+            y += splitObjetivo.length * 6;
+            
+            y = checkPageHeight(y);
+            doc.text(`Meta de treino: ${meta}`, margin, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Sobrepeso na Infância/Adolescência: ${sobrepeso === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Pais obesos: ${paisObesos === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Pratica atividade física: ${atividadeFisica === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            y += 8;
+            
+            // Listar atividades físicas
+            if (atividades.length > 0) {
+                doc.text('Atividades físicas praticadas:', margin, y);
+                y += 8;
+                
+                atividades.forEach((atividade, index) => {
+                    y = checkPageHeight(y);
+                    doc.text(`${index + 1}. ${atividade.tipo} - ${atividade.tempo}`, margin, y);
+                    y += 8;
+                });
+            }
+            
+            y = checkPageHeight(y);
+            doc.text(`Tontura: ${tontura === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Enjoo: ${enjoo === 'sim' ? 'Sim' : 'Não'}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Mal-estar: ${malEstar === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            const splitDesconfortos = doc.splitTextToSize(`Outros desconfortos: ${outrosDesconfortos}`, 170);
+            doc.text(splitDesconfortos, margin, y);
+            y += splitDesconfortos.length * 6;
+            
+            y = checkPageHeight(y);
+            doc.text(`Refeições por dia: ${refeicoesDia}`, margin, y);
+            doc.text(`Água por dia: ${aguaDia}L`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Faz dieta: ${dieta === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Suplementação: ${suplementacao === 'sim' ? 'Sim' : 'Não'}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Horas de sono: ${horasSono}`, margin, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Fumante: ${fumante === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Quantia: ${fumanteQuantia}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Frequência: ${fumanteFrequencia}`, margin, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Consome álcool: ${alcool === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Tipo: ${alcoolTipo}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Frequência: ${alcoolFrequencia}`, margin, y);
+            y += 8;
+            
+            // Adicionar rodapé na primeira página
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Página 1 de 2', 105, 285, { align: 'center' });
+            const data = new Date().toLocaleString('pt-BR');
+            doc.text(`Documento gerado em: ${data}`, 105, 280, { align: 'center' });
+            
+            // SEGUNDA PÁGINA (Condições de Saúde)
+            doc.addPage();
+            y = margin;
+            
+            doc.setFontSize(16);
+            doc.setTextColor(0, 100, 0);
+            doc.text('FORMULÁRIO DE ANAMNESE - CONDIÇÕES DE SAÚDE', 105, y, { align: 'center' });
+            y += 10;
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Treinador e Personal: Pedro Siriano - CREF 017922-G/DF', 105, y, { align: 'center' });
+            y += 10;
+            
+            doc.setDrawColor(0, 100, 0);
+            doc.line(margin, y, 200, y);
+            y += 15;
+            
+            y = checkPageHeight(y);
+            
+            // Condições de Saúde
+            doc.setFontSize(14);
+            doc.setTextColor(0, 100, 0);
+            doc.text('CONDIÇÕES DE SAÚDE', margin, y);
+            y += 10;
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            
+            y = checkPageHeight(y);
+            doc.text(`Diabético: ${diabetico === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Tipo 1: ${diabeteTipo1}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Tipo 2: ${diabeteTipo2}`, margin, y);
+            doc.text(`Origem: ${diabeteOrigem === 'familiar' ? 'Familiar' : diabeteOrigem === 'adquirido' ? 'Adquirido' : 'Não informado'}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Usa insulina: ${insulina === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Vezes por dia: ${insulinaVezes}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Local aplicação: ${insulinaLocal}`, margin, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Hipertenso: ${hipertenso === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Pressão: ${pressao}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Problema cardíaco: ${cardiaco === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Tipo: ${cardiacoTipo}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Origem cardíaca: ${cardiacoOrigem === 'familiar' ? 'Familiar' : cardiacoOrigem === 'adquirido' ? 'Adquirido' : 'Não informado'}`, margin, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Problema respiratório: ${respiratorio === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Tipo: ${respiratorioTipo}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Problema ortopédico: ${ortopedico === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Tipo: ${ortopedicoTipo}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Local: ${ortopedicoOnde}`, margin, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Fraturas: ${fraturas === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Tipo: ${fraturasTipo}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Local fratura: ${fraturasOnde}`, margin, y);
+            doc.text(`Data: ${fraturasData}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Usa medicamentos: ${medicamentos === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Tipo: ${medicamentosTipo}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Usa AEs: ${aes === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Tipo: ${aesTipo}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Cirurgia: ${cirurgia === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Local: ${cirurgiaLocal}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Data cirurgia: ${cirurgiaData}`, margin, y);
+            doc.text(`Tipo: ${cirurgiaTipo}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Dor na coluna: ${coluna === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Local: ${colunaOnde}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Dor muscular: ${muscular === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Local: ${muscularOnde}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            doc.text(`Dor articular: ${articular === 'sim' ? 'Sim' : 'Não'}`, margin, y);
+            doc.text(`Local: ${articularOnde}`, 100, y);
+            y += 8;
+            
+            y = checkPageHeight(y);
+            const splitRecomendacao = doc.splitTextToSize(`Recomendações: ${recomendacao}`, 170);
+            doc.text(splitRecomendacao, margin, y);
+            y += splitRecomendacao.length * 6;
+            
+            // Adicionar rodapé na segunda página
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Página 2 de 2', 105, 285, { align: 'center' });
+            doc.text(`Documento gerado em: ${data}`, 105, 280, { align: 'center' });
+            
+            // Salvar o PDF
+            doc.save(`anamnese_${nome.replace(/\s+/g, '_')}.pdf`);
+        });
+    </script>
+</body>
+</html>
